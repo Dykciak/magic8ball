@@ -1,14 +1,11 @@
 let ball;
-let askInput;
 let answer;
 let errorInfo;
+let selectedOption;
 
 const answerArray = [
-	"Tak.",
-	"Nie.",
-	"Być Może.",
-	"Nie chcesz znać odpowiedzi na to pytanie.",
-	"Nie wiem.",
+	"Przyjeżdzasz natychmiast i śpimy razem wtuleni🙄", // Dla opcji A
+	"Przyjeżdzasz natychmiast i śpimy razem wtuleni🙄", // Dla opcji B
 ];
 
 const main = () => {
@@ -18,13 +15,22 @@ const main = () => {
 
 const prepareDOMElements = () => {
 	ball = document.querySelector("img");
-	askInput = document.querySelector(".ask-input");
 	answer = document.querySelector(".answer");
 	errorInfo = document.querySelector(".error");
+	selectedOption = null;
 };
 
 const prepareDOMEvents = () => {
 	ball.addEventListener("click", shake);
+	document.querySelectorAll(".option-btn").forEach((button) => {
+		button.addEventListener("click", selectOption);
+	});
+};
+
+const selectOption = (event) => {
+	selectedOption = event.target.dataset.option;
+	errorInfo.textContent = "";
+	answer.textContent = `Wybrano odpowiedź ${selectedOption}`;
 };
 
 const shake = () => {
@@ -32,25 +38,24 @@ const shake = () => {
 	setTimeout(() => {
 		ball.classList.remove("shake-animation");
 	}, 1100);
-	if (askInput.value !== "" && askInput.value.slice(-1) === "?") {
-		setTimeout(randomAnswer, 1000);
-		errorInfo.textContent = "";
-	} else if (askInput.value !== "" && askInput.value.slice(-1) !== "?") {
-		answer.textContent = "";
+
+	if (selectedOption) {
 		setTimeout(() => {
-			errorInfo.textContent = "Musisz zakończyć pytanie znakiem zapytania.";
+			displayAnswer();
 		}, 1000);
 	} else {
-		answer.textContent = "";
 		setTimeout(() => {
-			errorInfo.textContent = "Musisz napisać pytanie.";
+			errorInfo.textContent = "Musisz wybrać odpowiedź A lub B.";
 		}, 1000);
 	}
 };
 
-const randomAnswer = () => {
-	answer.textContent =
-		answerArray[Math.floor(Math.random() * answerArray.length)];
+const displayAnswer = () => {
+	if (selectedOption === "A") {
+		answer.textContent = answerArray[0];
+	} else if (selectedOption === "B") {
+		answer.textContent = answerArray[1];
+	}
 };
 
 document.addEventListener("DOMContentLoaded", main);
